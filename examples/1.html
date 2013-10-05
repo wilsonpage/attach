@@ -2,19 +2,24 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Mocha Tests</title>
+  <title>Delegate Example</title>
 </head>
 <body>
   <div id="mocha"></div>
-  <div class="test-element">
-    <div class="test-class">Clicky</div>
+  <div class="parent">
+    <li>Click me</li>
+    <li>Click me</li>
+    <li>Click me</li>
+    <li>Click me</li>
+    <li>Click me</li>
+    <li>Click me</li>
   </div>
   <script src="../index.js"></script>
   <script>
-    var el = document.querySelector('.test-element');
+    var el = document.querySelector('.parent');
 
-    delegate(el, 'click', '.test-class', function(event) {
-      debugger;
+    delegate(el, 'click', 'li', function(event) {
+      this.style.color = 'red';
     });
   </script>
 </body>
