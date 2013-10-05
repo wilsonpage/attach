@@ -21,4 +21,4 @@ Open `test/index.html` in your browser.
 
 ## License
 
-(The MIT License)(http://github.com/wilsonpage/delegate/raw/LICENSE)
+[The MIT License](http://github.com/wilsonpage/delegate/raw/LICENSE)
