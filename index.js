@@ -19,7 +19,21 @@ var matches = proto.matchesSelector
   || proto.msMatchesSelector
   || proto.oMatchesSelector;
 
-
+/**
+ * Handles Backbone style
+ * shorthand event binding.
+ *
+ * Example:
+ *
+ *   delegate(myElement, {
+ *     'click .foo': onFooClick,
+ *     'click .bar': onBarClick
+ *   });
+ *
+ * @param  {element} root
+ * @param  {Object} config
+ * @param  {Object} ctx
+ */
 function delegate(root, config, ctx) {
   var selector;
   var parts;
