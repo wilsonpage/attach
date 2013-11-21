@@ -19,6 +19,24 @@ var matches = proto.matchesSelector
   || proto.msMatchesSelector
   || proto.oMatchesSelector;
 
+
+function delegate(root, config, ctx) {
+  var selector;
+  var parts;
+  var type;
+  var key;
+  var fn;
+
+  for (key in config) {
+    parts = key.split(' ');
+    selector = parts[1];
+    type = parts[0];
+    fn = config[key];
+
+    delegate.on(root, type, selector, fn, ctx);
+  }
+}
+
 /**
  * Bind an event listener
  * to the given element.
@@ -35,7 +53,7 @@ var matches = proto.matchesSelector
  * @param  {Function} fn
  * @param  {Object}   ctx (optional)
  */
-function delegate(root, type, selector, fn, ctx) {
+delegate.on = function(root, type, selector, fn, ctx) {
 
   // `selector` is optional
   if (typeof selector === 'function') {
