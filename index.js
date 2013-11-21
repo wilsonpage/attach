@@ -71,8 +71,13 @@ delegate.on = function(root, type, selector, fn, ctx) {
   if (typeof selector === 'function') {
     ctx = fn;
     fn = selector;
-    selector = 'null';
+    selector = null;
   }
+
+  // We use the key 'null' to
+  // indicate that we are binding
+  // an event handler to the root.
+  selector = selector || 'null';
 
   var store = getStore(root);
   var master = store.master[type];
