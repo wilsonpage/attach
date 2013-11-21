@@ -35,19 +35,17 @@ var matches = proto.matchesSelector
  * @param  {Object} ctx
  */
 function delegate(root, config, ctx) {
-  var selector;
   var parts;
-  var type;
   var key;
-  var fn;
 
   for (key in config) {
     parts = key.split(' ');
-    selector = parts[1];
-    type = parts[0];
-    fn = config[key];
-
-    delegate.on(root, type, selector, fn, ctx);
+    delegate.on(
+      root,
+      parts[0],
+      parts[1],
+      config[key],
+      ctx);
   }
 }
 
