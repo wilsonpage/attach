@@ -7,3 +7,7 @@ function simulate(type, el) {
   e.initEvent(type, true, true);
   el.dispatchEvent(e);
 }
+
+function $(query) {
+  return document.querySelector(query);
+}

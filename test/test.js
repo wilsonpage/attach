@@ -1,10 +1,10 @@
 
 suite('bind', function() {
 
-  test("Should fire the callback", function() {
+  test('Should fire the callback', function() {
     var callback = sinon.spy();
-    var el = document.querySelector('.parent');
-    var child = document.querySelector('.child');
+    var el = $('.parent');
+    var child = $('.child');
 
     delegate(el, 'click', '.child', callback);
     simulate('click', child);
@@ -12,10 +12,10 @@ suite('bind', function() {
     assert(callback.called);
   });
 
-  test("Should not fire the callback after it has been removed", function() {
+  test('Should not fire the callback after it has been removed', function() {
     var callback = sinon.spy();
-    var el = document.querySelector('.parent');
-    var child = document.querySelector('.child');
+    var el = $('.parent');
+    var child = $('.child');
 
     delegate(el, 'click', '.child', callback);
     delegate.off(el, 'click', '.child');
@@ -24,26 +24,27 @@ suite('bind', function() {
     assert(!callback.called);
   });
 
-  test("Should remove all callbacks if just event type given", function() {
+  test('Should remove all callbacks if just event type given', function() {
     var callback = sinon.spy();
-    var parent = document.querySelector('.parent');
-    var child1 = document.querySelector('.foo');
-    var child2 = document.querySelector('.bar');
+    var parent = $('.parent');
+    var child1 = $('.foo');
+    var child2 = $('.bar');
 
     delegate(parent, 'click', '.foo', callback);
     delegate(parent, 'click', '.bar', callback);
+
     delegate.off(parent, 'click');
 
     simulate('click', child1);
     simulate('click', child2);
 
-    assert(!callback.called);
+    assert(!callback.called, 'Should not have called any callbacks');
   });
 
-  test("Should remove just the selector callback specified", function() {
-    var parent = document.querySelector('.parent');
-    var child1 = document.querySelector('.foo');
-    var child2 = document.querySelector('.bar');
+  test('Should remove just the selector callback specified', function() {
+    var parent = $('.parent');
+    var child1 = $('.foo');
+    var child2 = $('.bar');
     var callback1 = sinon.spy();
     var callback2 = sinon.spy();
 
@@ -55,13 +56,31 @@ suite('bind', function() {
     simulate('click', child1);
     simulate('click', child2);
 
-    assert(!callback1.called);
-    assert(callback2.called);
+    assert(!callback1.called, 'Should not call have called the .foo callback');
+    assert(callback2.called, 'Should have still called the .bar callback');
   });
 
-  test("Should call the callback on the given context", function() {
-    var parent = document.querySelector('.parent');
-    var child1 = document.querySelector('.foo');
+  test('Should remove listeners of *all* types if no type is given', function() {
+    var onClick = sinon.spy();
+    var onMouseover = sinon.spy();
+    var parent = $('.parent');
+    var foo = $('.foo');
+
+    delegate(parent, 'mousedown', '.foo', onMouseover);
+    delegate(parent, 'click', '.foo', onClick);
+
+    delegate.off(parent);
+
+    simulate('click', foo);
+    simulate('mousedown', foo);
+
+    assert(!onClick.called, 'Should not have called the \'click\' callback');
+    assert(!onMouseover.called, 'Should not have called the \'mouseover\' callback');
+  });
+
+  test('Should call the callback on the given context', function() {
+    var parent = $('.parent');
+    var child1 = $('.foo');
     var callback1 = sinon.spy();
     var ctx = { custom: 'context' };
 
@@ -70,6 +89,33 @@ suite('bind', function() {
     simulate('click', child1);
 
     assert(callback1.firstCall.calledOn(ctx));
+  });
+
+  test('Should be able to bind event handlers to the root if selector not given', function() {
+    var parent = $('.parent');
+    var foo = $('.foo');
+    var callback = sinon.spy();
+
+    delegate(parent, 'click', callback);
+    simulate('click', parent);
+
+    assert(callback.called, 'The callback should have been called');
+  });
+
+  test('Should stopPropagation if false is returned from callback', function() {
+    var parent = $('.parent');
+    var baz = $('.baz');
+    var callback2 = sinon.spy();
+    var callback1 = sinon.spy(function() { return false; });
+
+    delegate(parent, 'click', callback2);
+    delegate(parent, 'click', '.bar', callback2);
+    delegate(parent, 'click', '.baz', callback1);
+
+    simulate('click', baz);
+
+    assert(callback1.called, 'The first callback should have been called');
+    assert(!callback2.called, 'Callbacks further up the DOM should not have been called');
   });
 
 });
