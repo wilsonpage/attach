@@ -124,7 +124,7 @@ suite('bind', function() {
     var baz = $('.baz');
 
     delegate(parent, {
-      'click .bar': callback,
+      'click': callback,
       'click .baz': callback
     });
 
