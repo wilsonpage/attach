@@ -6,7 +6,7 @@
  * references under on root
  */
 
-var ns = '_delegate';
+var ns = '_attach';
 
 /**
  * Normalize `matchesSelector`
@@ -25,7 +25,7 @@ var matches = proto.matchesSelector
  *
  * Example:
  *
- *   delegate(myElement, {
+ *   attach(myElement, {
  *     'click .foo': onFooClick,
  *     'click .bar': onBarClick
  *   });
@@ -34,13 +34,13 @@ var matches = proto.matchesSelector
  * @param  {Object} config
  * @param  {Object} ctx
  */
-function delegate(root, config, ctx) {
+function attach(root, config, ctx) {
   var parts;
   var key;
 
   for (key in config) {
     parts = key.split(' ');
-    delegate.on(
+    attach.on(
       root,
       parts[0],
       parts[1],
@@ -55,7 +55,7 @@ function delegate(root, config, ctx) {
  *
  * Example:
  *
- *   delegate(myEl, 'click', '.my-class', function(event, el) {
+ *   attach(myEl, 'click', '.my-class', function(event, el) {
  *     // Do stuff
  *   });
  *
@@ -65,7 +65,7 @@ function delegate(root, config, ctx) {
  * @param  {Function} fn
  * @param  {Object}   ctx (optional)
  */
-delegate.on = function(root, type, selector, fn, ctx) {
+attach.on = function(root, type, selector, fn, ctx) {
 
   // `selector` is optional
   if (typeof selector === 'function') {
@@ -147,7 +147,7 @@ delegate.on = function(root, type, selector, fn, ctx) {
 }
 
 /**
- * Unbind an event delegate
+ * Unbind an event attach
  * from the given root element.
  *
  * If no selector if given, all
@@ -157,16 +157,16 @@ delegate.on = function(root, type, selector, fn, ctx) {
  * Example:
  *
  *   // Remove one
- *   delegate.off(myEl, 'click', '.my-class');
+ *   attach.off(myEl, 'click', '.my-class');
  *
  *   // Remove all
- *   delegate.off(myEl, 'click');
+ *   attach.off(myEl, 'click');
  *
  * @param  {Element} root
  * @param  {String} type (optional)
  * @param  {String} selector (optional)
  */
-delegate.off = function(root, type, selector) {
+attach.off = function(root, type, selector) {
   var store = getStore(root);
   var master = store.master[type];
   var delegates = store.delegates[type];
@@ -184,7 +184,7 @@ delegate.off = function(root, type, selector) {
   // Remove all
   else {
     for (type in store.master) {
-      delegate.off(root, type);
+      attach.off(root, type);
     }
   }
 
@@ -234,15 +234,15 @@ function isEmpty(ob) {
 }
 
 /**
- * Expose 'delegate' (UMD)
+ * Expose 'attach' (UMD)
  */
 
 if (typeof exports === "object") {
-  module.exports = delegate;
+  module.exports = attach;
 } else if (typeof define === "function" && define.amd) {
-  define(function(){ return delegate; });
+  define(function(){ return attach; });
 } else {
-  window['delegate'] = delegate;
+  window['attach'] = attach;
 }
 
 })();

@@ -1,4 +1,4 @@
-# delegate [![Build Status](https://travis-ci.org/wilsonpage/delegate.png?branch=master)](https://travis-ci.org/wilsonpage/delegate)
+# attach [![Build Status](https://travis-ci.org/wilsonpage/attach.png?branch=master)](https://travis-ci.org/wilsonpage/attach)
 
 A small and simple event (and delegate event) binding library.
 
@@ -74,4 +74,4 @@ Open `test/index.html` in your browser.
 
 ## License
 
-[The MIT License](http://github.com/wilsonpage/delegate/raw/LICENSE)
+[The MIT License](http://github.com/wilsonpage/attach/raw/LICENSE)

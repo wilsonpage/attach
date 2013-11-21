@@ -1,7 +1,7 @@
 {
-  "name": "delegate",
+  "name": "attach",
   "version": "0.1.0",
-  "description": "A small and simple event delegate library.",
+  "description": "A small and simple event binding library.",
   "main": "index.js",
   "directories": {
     "test": "test"
@@ -11,12 +11,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "http://github.com/wilsonpage/delegate"
+    "url": "http://github.com/wilsonpage/attach"
   },
   "author": "Wilson Page",
   "license": "BSD-2-Clause",
   "bugs": {
-    "url": "https://github.com/wilsonpage/delegate/issues"
+    "url": "https://github.com/wilsonpage/attach/issues"
   },
   "devDependencies": {
     "mocha-phantomjs": "~3.1.5",

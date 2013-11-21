@@ -6,7 +6,7 @@ suite('bind', function() {
     var el = $('.parent');
     var child = $('.child');
 
-    delegate.on(el, 'click', '.child', callback);
+    attach.on(el, 'click', '.child', callback);
     simulate('click', child);
 
     assert(callback.called);
@@ -17,8 +17,8 @@ suite('bind', function() {
     var el = $('.parent');
     var child = $('.child');
 
-    delegate.on(el, 'click', '.child', callback);
-    delegate.off(el, 'click', '.child');
+    attach.on(el, 'click', '.child', callback);
+    attach.off(el, 'click', '.child');
 
     simulate('click', child);
     assert(!callback.called);
@@ -30,10 +30,10 @@ suite('bind', function() {
     var child1 = $('.foo');
     var child2 = $('.bar');
 
-    delegate.on(parent, 'click', '.foo', callback);
-    delegate.on(parent, 'click', '.bar', callback);
+    attach.on(parent, 'click', '.foo', callback);
+    attach.on(parent, 'click', '.bar', callback);
 
-    delegate.off(parent, 'click');
+    attach.off(parent, 'click');
 
     simulate('click', child1);
     simulate('click', child2);
@@ -48,10 +48,10 @@ suite('bind', function() {
     var callback1 = sinon.spy();
     var callback2 = sinon.spy();
 
-    delegate.on(parent, 'click', '.foo', callback1);
-    delegate.on(parent, 'click', '.bar', callback2);
+    attach.on(parent, 'click', '.foo', callback1);
+    attach.on(parent, 'click', '.bar', callback2);
 
-    delegate.off(parent, 'click', '.foo');
+    attach.off(parent, 'click', '.foo');
 
     simulate('click', child1);
     simulate('click', child2);
@@ -66,10 +66,10 @@ suite('bind', function() {
     var parent = $('.parent');
     var foo = $('.foo');
 
-    delegate.on(parent, 'mousedown', '.foo', onMouseover);
-    delegate.on(parent, 'click', '.foo', onClick);
+    attach.on(parent, 'mousedown', '.foo', onMouseover);
+    attach.on(parent, 'click', '.foo', onClick);
 
-    delegate.off(parent);
+    attach.off(parent);
 
     simulate('click', foo);
     simulate('mousedown', foo);
@@ -84,7 +84,7 @@ suite('bind', function() {
     var callback1 = sinon.spy();
     var ctx = { custom: 'context' };
 
-    delegate.on(parent, 'click', '.foo', callback1, ctx);
+    attach.on(parent, 'click', '.foo', callback1, ctx);
 
     simulate('click', child1);
 
@@ -96,7 +96,7 @@ suite('bind', function() {
     var foo = $('.foo');
     var callback = sinon.spy();
 
-    delegate.on(parent, 'click', callback);
+    attach.on(parent, 'click', callback);
     simulate('click', parent);
 
     assert(callback.called, 'The callback should have been called');
@@ -108,9 +108,9 @@ suite('bind', function() {
     var callback2 = sinon.spy();
     var callback1 = sinon.spy(function() { return false; });
 
-    delegate.on(parent, 'click', callback2);
-    delegate.on(parent, 'click', '.bar', callback2);
-    delegate.on(parent, 'click', '.baz', callback1);
+    attach.on(parent, 'click', callback2);
+    attach.on(parent, 'click', '.bar', callback2);
+    attach.on(parent, 'click', '.baz', callback1);
 
     simulate('click', baz);
 
@@ -123,7 +123,7 @@ suite('bind', function() {
     var parent = $('.parent');
     var baz = $('.baz');
 
-    delegate(parent, {
+    attach(parent, {
       'click': callback,
       'click .baz': callback
     });
