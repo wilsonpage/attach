@@ -9,7 +9,7 @@
 var ns = '_delegate';
 
 /**
- * Normalize matchesSelector
+ * Normalize `matchesSelector`
  */
 
 var proto = Element.prototype;
@@ -31,13 +31,13 @@ var matches = proto.matchesSelector
  *
  * @param  {Element}  root
  * @param  {String}   type
- * @param  {String}   selector
+ * @param  {String}   selector (optional)
  * @param  {Function} fn
- * @param  {Object}   ctx
+ * @param  {Object}   ctx (optional)
  */
 function delegate(root, type, selector, fn, ctx) {
 
-  // Selector argument is optional
+  // `selector` is optional
   if (typeof selector === 'function') {
     ctx = fn;
     fn = selector;
@@ -91,9 +91,12 @@ function delegate(root, type, selector, fn, ctx) {
         if (matched) {
           out = fn.call(ctx || el, event, el);
 
-          // Stop propagation if
-          // the user returns false
-          // from the callback.
+          // Stop propagation if the
+          // user returns false from the
+          // callback. Ideally we would
+          // use .stopPropagation, but I
+          // don't know of any way to detect
+          // if this has been called.
           if (out === false) return;
         }
       }
@@ -107,6 +110,56 @@ function delegate(root, type, selector, fn, ctx) {
     }
   }
 }
+
+/**
+ * Unbind an event delegate
+ * from the given root element.
+ *
+ * If no selector if given, all
+ * callbacks for the given event
+ * type are removed.
+ *
+ * Example:
+ *
+ *   // Remove one
+ *   delegate.off(myEl, 'click', '.my-class');
+ *
+ *   // Remove all
+ *   delegate.off(myEl, 'click');
+ *
+ * @param  {Element} root
+ * @param  {String} type (optional)
+ * @param  {String} selector (optional)
+ */
+delegate.off = function(root, type, selector) {
+  var store = getStore(root);
+  var master = store.master[type];
+  var delegates = store.delegates[type];
+
+  // Remove just one
+  if (type && selector) {
+    delete delegates[selector];
+  }
+
+  // Remove all of type
+  else if (type) {
+    delete store.delegates[type];
+  }
+
+  // Remove all
+  else {
+    for (type in store.master) {
+      delegate.off(root, type);
+    }
+  }
+
+  // If there aren't any callbacks
+  // of this type left, remove the master.
+  if (isEmpty(store.delegates[type])) {
+    root.removeEventListener(type, master);
+    delete store.master[type];
+  }
+};
 
 /**
  * Gets the reference store
@@ -132,56 +185,6 @@ function getStore(el) {
 function createStore(el) {
   return el[ns] = { master: {}, delegates: {} };
 }
-
-/**
- * Unbind an event delegate
- * from the given root element.
- *
- * If no selector if given, all
- * callbacks for the given event
- * type are removed.
- *
- * Example:
- *
- *   // Remove one
- *   delegate.off(myEl, 'click', '.my-class');
- *
- *   // Remove all
- *   delegate.off(myEl, 'click');
- *
- * @param  {Element} root
- * @param  {String} type
- * @param  {String} selector
- */
-delegate.off = function(root, type, selector) {
-  var store = getStore(root);
-  var master = store.master[type];
-  var delegates = store.delegates[type];
-
-  // Remove just one
-  if (type && selector) {
-    delete delegates[selector];
-  }
-
-  // Remove all of type
-  else if (type) {
-    delete store.delegates[type];
-  }
-
-  // Remove all
-  else {
-    for (type in store.master) {
-      delegate.off(root, type);
-    }
-  }
-
-  // If there aren't any callbacks
-  // of this type left, remove the master
-  if (isEmpty(store.delegates[type])) {
-    root.removeEventListener(type, master);
-    delete store.master[type];
-  }
-};
 
 /**
  * Checks if the given
