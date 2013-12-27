@@ -144,7 +144,7 @@ attach.on = function(root, type, selector, fn, ctx) {
       el = el.parentNode;
     }
   }
-}
+};
 
 /**
  * Unbind an event attach
