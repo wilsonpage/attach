@@ -12,7 +12,11 @@
     "**/.*",
     "node_modules",
     "bower_components",
+    "examples",
     "test",
-    "tests"
+    "tests",
+    "package.json",
+    "README.md",
+    "LICENSE"
   ]
 }
