@@ -20,36 +20,6 @@ var matches = proto.matchesSelector
   || proto.oMatchesSelector;
 
 /**
- * Handles Backbone style
- * shorthand event binding.
- *
- * Example:
- *
- *   attach(myElement, {
- *     'click .foo': onFooClick,
- *     'click .bar': onBarClick
- *   });
- *
- * @param  {element} root
- * @param  {Object} config
- * @param  {Object} ctx
- */
-function attach(root, config, ctx) {
-  var parts;
-  var key;
-
-  for (key in config) {
-    parts = key.split(' ');
-    attach.on(
-      root,
-      parts[0],
-      parts[1],
-      config[key],
-      ctx);
-  }
-}
-
-/**
  * Bind an event listener
  * to the given element.
  *
@@ -65,7 +35,10 @@ function attach(root, config, ctx) {
  * @param  {Function} fn
  * @param  {Object}   ctx (optional)
  */
-attach.on = function(root, type, selector, fn, ctx) {
+function attach(root, type, selector, fn, ctx) {
+  if (arguments.length === 2) {
+    return attach.many.apply(null, arguments);
+  }
 
   // `selector` is optional
   if (typeof selector === 'function') {
@@ -88,7 +61,7 @@ attach.on = function(root, type, selector, fn, ctx) {
 
   // Only one master event listener
   // is needed per event type.
-  if (master) return;
+  if (master) { return; }
 
   // Add the master callbak to the
   // root node and to the store.
@@ -101,8 +74,8 @@ attach.on = function(root, type, selector, fn, ctx) {
    *
    * @param  {Event}   event
    */
-  function callback(event) {
-    var el = event.target;
+  function callback(e) {
+    var el = e.target;
     var selector;
     var matched;
     var out;
@@ -113,18 +86,18 @@ attach.on = function(root, type, selector, fn, ctx) {
     while (el) {
 
       // Loop over each selector
-      // bound to this event type.
+      // bound to this e type.
       for (selector in delegates) {
         fn = delegates[selector];
 
         // There are two types of match. A
         // 'null' selector at the root node,
         // or a selector match on the current el.
-        matched = (el === root && selector === 'null')
-          || matches.call(el, selector);
+        matched = (el === root && selector === 'null') ||
+          matches.call(el, selector);
 
         if (matched) {
-          out = fn.call(ctx || el, event, el);
+          out = fn.call(ctx || el, e, el);
 
           // Stop propagation if the
           // user returns false from the
@@ -132,7 +105,7 @@ attach.on = function(root, type, selector, fn, ctx) {
           // use .stopPropagation, but I
           // don't know of any way to detect
           // if this has been called.
-          if (out === false) return;
+          if (out === false) { return e.stopPropagation(); }
         }
       }
 
@@ -144,7 +117,9 @@ attach.on = function(root, type, selector, fn, ctx) {
       el = el.parentNode;
     }
   }
-};
+}
+
+attach.on = attach;
 
 /**
  * Unbind an event attach
@@ -197,6 +172,36 @@ attach.off = function(root, type, selector) {
 };
 
 /**
+ * Handles Backbone style
+ * shorthand event binding.
+ *
+ * Example:
+ *
+ *   attach(myElement, {
+ *     'click .foo': onFooClick,
+ *     'click .bar': onBarClick
+ *   });
+ *
+ * @param  {element} root
+ * @param  {Object} config
+ * @param  {Object} ctx
+ */
+attach.many = function(root, config, ctx) {
+  var parts;
+  var key;
+
+  for (key in config) {
+    parts = key.split(' ');
+    attach.on(
+      root,
+      parts[0],
+      parts[1],
+      config[key],
+      ctx);
+  }
+};
+
+/**
  * Gets the reference store
  * attached to the given node.
  *
@@ -218,7 +223,8 @@ function getStore(el) {
  * @return {Object}
  */
 function createStore(el) {
-  return el[ns] = { master: {}, delegates: {} };
+  el[ns] = { master: {}, delegates: {} };
+  return el[ns];
 }
 
 /**
@@ -229,7 +235,7 @@ function createStore(el) {
  * @return {Boolean}
  */
 function isEmpty(ob) {
-  for (var key in ob) return false;
+  for (var key in ob) { return false; }
   return true;
 }
 
@@ -242,7 +248,7 @@ if (typeof exports === "object") {
 } else if (typeof define === "function" && define.amd) {
   define(function(){ return attach; });
 } else {
-  window['attach'] = attach;
+  window.attach = attach;
 }
 
 })();
